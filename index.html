@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>濟州島行程</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,6 +96,18 @@ section[hidden]{display:none}
 .warnbox ul{margin:0;padding-left:18px;display:grid;gap:4px}
 .okbox{background:var(--ok);color:var(--okfg);border-radius:14px;padding:12px 16px;font-size:14px;margin-bottom:12px}
 .okbox ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.wl{list-style:none;margin:0;padding:0}
+.wi{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px;align-items:start;padding:4px 0;border-top:1px dashed var(--line)}
+.wi:first-child{border-top:0}
+.wk{width:44px;height:44px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0}
+.wk span{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;color:transparent;font-size:14px;font-weight:900}
+.wk[aria-pressed="true"] span{background:var(--c);border-color:var(--c);color:var(--bg)}
+.wi.done .nm{opacity:.45;text-decoration:line-through}
+.wi .nm{padding-top:10px}
+.wx{border:0;background:none;color:var(--muted);font:inherit;font-size:13px;min-height:44px;padding:0 8px;cursor:pointer}
+.addrow{display:flex;gap:8px;margin-top:8px}
+.addrow input{flex:1;min-width:0;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;padding:0 12px}
+.addrow button{min-height:44px;border-radius:12px;border:0;background:var(--c);color:var(--bg);font:inherit;font-weight:900;padding:0 16px;cursor:pointer}
 @media (prefers-reduced-motion:no-preference){.tab,.chip,.sw{transition:background-color .15s,color .15s}}
 @media (max-width:420px){.row{grid-template-columns:46px minmax(0,1fr) 40px;padding-left:16px}.ck{width:40px}}
 </style>
@@ -201,6 +212,35 @@ const FOOD=[
  ['晚','西歸浦黑豬肉 BBQ（太平路 353 巷 7 號）',null,'距偶來市場與天地淵瀑布約 5 分鐘。16:30–23:00，平日 18:00 後開始排隊，建議 16:30–17:30 到。想吃生魚片：市場內友情生魚片中心可外帶。','서귀포 흑돼지 태평로353번길 7']]}
 ];
 
+const WISH=[
+{h:'鞋子',w:'濟州市 · Day 3',items:[
+ ['蓮洞 Shoemarker / ABC-Mart / S-market','努威瑪魯街一帶，19:30 逛街時去；Shoemarker 11:30–23:00。結帳前先確認金額，有評論說結帳價和標價不同。','Shoemarker 제주연동점'],
+ ['漆星路 ABC Mart Grand Stage','10:30–22:00，17:00 逛完中央地下街順路過去。','ABC Mart Grand Stage 제주'],
+ ['North Face 濟州店','11:00–21:00，在漆星路，有濟州限定款。','노스페이스 제주']]},
+{h:'市場與地下街',w:'Day 3',items:[
+ ['東門市場','16:00，小吃、橘子零食。','동문시장'],
+ ['中央地下街','17:00，找伴手禮和衣服，攤位多半 19:00 前收。','제주중앙지하상가']]},
+{h:'Olive Young',w:'濟州市 · Day 3',items:[
+ ['蓮洞店（Singwang-ro 57）','11:00–23:00，評價最高、商品齊，19:30 逛蓮洞時去。','올리브영 제주 신광로 57'],
+ ['東門市場旁（Gwandeok-ro 62-1）','10:00–21:30，在中央地下街第 4 門旁，店面偏小。16:00–17:00 順路。','올리브영 관덕로 62-1 제주'],
+ ['中央路店（中央路 246）','10:30–23:00，評分 4.3。','올리브영 제주 중앙로 246']]},
+{h:'伴手禮',w:'沿路買',items:[
+ ['Udo Sand 花生砂餅','牛島，10:30–18:00，Day 2 在島上順便買。','Udo Sand 우도'],
+ ['Audrant Bakery 大蒜麵包','舊行程的麵包店，目前沒排進 Day 1，想買再加。','Audrant Bakery 제주']]},
+{h:'想去（備案或還沒排）',w:'看時間',items:[
+ ['涉地可支 (섭지코지)','牛島停駛時的備案，免費，約 1 小時。','섭지코지'],
+ ['濟州海女博物館','牛島停駛時的備案，開放時間出發前確認。','제주해녀박물관'],
+ ['月汀里海灘 (월정리해변)','牛島停駛時的備案，海邊咖啡廳小歇。','월정리해변']]}];
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let own=[];try{own=JSON.parse(store0('jeju-wish')||'[]')}catch(e){own=[]}
+function store0(k){try{return localStorage.getItem(k)}catch(e){return null}}
+const wdone=new Set((store0('jeju-wdone')||'').split(',').filter(Boolean));
+function wishHTML(){
+  const li=(id,name,note,q,x)=>{const on=wdone.has(id);return `<li class="wi${on?' done':''}" data-id="${id}"><button class="wk" type="button" aria-pressed="${on}" aria-label="標記已完成：${esc(name)}"><span>✓</span></button><div><div class="nm">${q?`<a href="${map(q)}" target="_blank" rel="noopener">${esc(name)}</a>`:esc(name)}</div>${note?`<span class="nt">${esc(note)}</span>`:''}</div>${x?`<button class="wx" type="button" data-del="${x}" aria-label="刪除 ${esc(name)}">刪除</button>`:''}</li>`};
+  const secs=WISH.map((g,gi)=>`<div class="card"><h3>${g.h}<span class="tag">${g.w}</span></h3><ul class="wl">${g.items.map((it,i)=>li('w'+gi+'-'+i,it[0],it[1],it[2])).join('')}</ul></div>`).join('');
+  const mine=`<div class="card"><h3>自己加的</h3><ul class="wl" id="ownList">${own.map((o,i)=>li('o'+i,o,'',map(o),i)).join('')}</ul><form class="addrow" id="wishForm"><input id="wishIn" type="text" placeholder="想去或想買的店名、地點" aria-label="新增想逛想去"><button type="submit">加入</button></form></div>`;
+  return `<div class="hero"><span class="dn">WISH</span><h2>想逛想去</h2><p>購物清單與還沒排進行程的地點，可勾選、可自己加</p></div>${secs}${mine}`;
+}
 const $=s=>document.querySelector(s);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let backup=store.get('jeju-backup')==='1';
@@ -208,7 +248,7 @@ const done=new Set((store.get('jeju-done')||'').split(',').filter(Boolean));
 const saveDone=()=>store.set('jeju-done',[...done].join(','));
 
 const TABS=[...DAYS.map(d=>({id:'day-'+d.id,label:d.tab,small:d.date.slice(0,5),c:'--d'+d.id})),
- {id:'food',label:'餐廳',small:'東南西北',c:'--eat'},{id:'info',label:'資訊',small:'住宿 · 提醒',c:'--info'}];
+ {id:'food',label:'餐廳',small:'東南西北',c:'--eat'},{id:'wish',label:'想逛想去',small:'購物 · 備案',c:'--d3'},{id:'info',label:'資訊',small:'住宿 · 提醒',c:'--info'}];
 
 function link(r){return r.q?`<a href="${map(r.q)}" target="_blank" rel="noopener">${r.n}</a>`:`<span>${r.n}</span>`}
 function dayHTML(d){
@@ -244,6 +284,7 @@ function build(){
   $('#panels').innerHTML=TABS.map(t=>`<section id="p-${t.id}" role="tabpanel" hidden style="--c:var(${t.c});--ct:var(${t.c==='--eat'?'--d2t':t.c+'t'})"></section>`).join('');
   renderDay();
   $('#p-food').innerHTML=foodHTML();
+  $('#p-wish').innerHTML=wishHTML();
   $('#p-info').innerHTML=infoHTML();
 }
 function renderDay(){DAYS.forEach(d=>{$('#p-day-'+d.id).innerHTML=dayHTML(d)})}
@@ -263,6 +304,10 @@ window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
 document.addEventListener('click',e=>{
   const tab=e.target.closest('.tab');
   if(tab){const id=tab.dataset.id;show(id);try{history.replaceState(null,'','#'+id)}catch(x){}return}
+  const wk=e.target.closest('.wk');
+  if(wk){const li=wk.closest('.wi'),id=li.dataset.id;if(wdone.has(id))wdone.delete(id);else wdone.add(id);store.set('jeju-wdone',[...wdone].join(','));const on=wdone.has(id);li.classList.toggle('done',on);wk.setAttribute('aria-pressed',on);return}
+  const wx=e.target.closest('.wx');
+  if(wx){own.splice(+wx.dataset.del,1);store.set('jeju-wish',JSON.stringify(own));$('#p-wish').innerHTML=wishHTML();return}
   const ck=e.target.closest('.ck');
   if(ck){const li=ck.closest('.row'),id=li.dataset.id;
     if(done.has(id))done.delete(id);else done.add(id);saveDone();
@@ -279,7 +324,6 @@ document.addEventListener('click',e=>{
     const root=document.documentElement,dark=root.dataset.theme==='dark'||(!root.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);
     root.dataset.theme=dark?'light':'dark';$('#themeBtn').textContent=dark?'切換深色':'切換淺色';store.set('jeju-theme',root.dataset.theme);}
 });
+document.addEventListener('submit',e=>{if(e.target.id!=='wishForm')return;e.preventDefault();const v=$('#wishIn').value.trim();if(!v)return;own.push(v);store.set('jeju-wish',JSON.stringify(own));$('#p-wish').innerHTML=wishHTML();$('#wishIn').focus()});
 (function(){const t=store.get('jeju-theme');if(t){document.documentElement.dataset.theme=t;$('#themeBtn').textContent=t==='dark'?'切換淺色':'切換深色'}else if(matchMedia('(prefers-color-scheme: dark)').matches){$('#themeBtn').textContent='切換淺色'}})();
 </script>
-
-</body></html>
